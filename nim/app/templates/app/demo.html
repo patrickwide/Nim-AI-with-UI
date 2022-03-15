@@ -1,0 +1,24 @@
+{% extends "app/layout.html" %}
+
+{% block body %}
+<!-- {% if message %}
+<div>{{ message }}</div>
+{% endif %} -->
+{% csrf_token %}
+<div style="display: flex;align-items: center;justify-content: center;text-align: center;">
+    <div style="border: 10px solid #673ab78f;border-radius: 20px;padding: 10px;background: #5623b1;margin: 5px;font-size: 30px;color: #fff;">AI<div style="margin: 5px;border-radius: 50%;width: 40px;height: 40px;color: #101010;font-size: 32px;padding: 0px;" id="ai"></div></div>
+    <div style="border: 10px solid #673ab78f;border-radius: 20px;padding: 10px;background: #5623b1;margin: 5px;font-size: 30px;color: #fff;align-self: flex-end;" id="status"></div>
+    <div style="border: 10px solid #673ab78f;border-radius: 20px;padding: 10px;background: #5623b1;margin: 5px;font-size: 30px;color: #fff;">You<div style="margin: 5px;border-radius: 50%;width: 40px;height: 40px;color: #101010;font-size: 32px;padding: 0px;" id="you"></div></div>
+</div>
+<br>
+<div style="display: flex;align-items: center;justify-content: center;text-align: center;">
+    <div id="root" style="border: 10px solid #673ab78f;border-radius: 20px;padding: 10px;background: #5623b1;"></div>
+</div>
+<br>
+<div style="display: flex;align-items: center;justify-content: center;text-align: center;">
+    <div style="border: 10px solid #673ab78f;border-radius: 20px;padding: 10px;background: #5623b1;margin: 5px;font-size: 30px;color: #fff;">
+        <button style="margin: 5px; border-radius: 20px;background: rgb(233, 30, 126); color: white; border: 10px solid rgb(136, 14, 79); font-size: 32px; padding: 10px;" onclick="document.location.reload()">Restart</button>
+    </div>
+</div>
+
+{% endblock %}

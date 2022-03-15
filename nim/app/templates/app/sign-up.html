@@ -1,0 +1,16 @@
+{% extends "app/layout.html" %}
+
+{% block body %}
+{% if message %}
+<div>{{ message }}</div>
+{% endif %}
+
+<form action="{% url 'sign_up' %}" method="post">
+    {% csrf_token %}
+    <input type="text" , name="username" , placeholder="Username">
+    <input type="password" , name="password" , placeholder="Password">
+    <input type="password" , name="password_confirmation" , placeholder="Password confirmation">
+    <input type="submit" , value="Login">
+</form>
+
+{% endblock %}

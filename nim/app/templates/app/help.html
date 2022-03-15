@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help</title>
+</head>
+<body>
+<h1>Game page</h1>
+<button id="send">send</button>
+
+<p id="status">satus</p>
+<p>pile 0</p>
+<button onmouseleave="leave('pile-0-count-1')" onmouseover="hover('pile-0-count-1')" onclick="play('pile-0-count-1')" id="pile-0-count-1">1</button>
+
+<p>pile 1</p>
+<button onmouseleave="leave('pile-1-count-3')" onmouseover="hover('pile-1-count-3')" onclick="play('pile-1-count-3')" id="pile-1-count-3">3</button>
+<button onmouseleave="leave('pile-1-count-2')" onmouseover="hover('pile-1-count-2')" onclick="play('pile-1-count-2')" id="pile-1-count-2">2</button>
+<button onmouseleave="leave('pile-1-count-1')" onmouseover="hover('pile-1-count-1')" onclick="play('pile-1-count-1')" id="pile-1-count-1">1</button>
+
+<p>pile 2</p>
+<button onmouseleave="leave('pile-2-count-5')" onmouseover="hover('pile-2-count-5')" onclick="play('pile-2-count-5')" id="pile-2-count-5">5</button>
+<button onmouseleave="leave('pile-2-count-4')" onmouseover="hover('pile-2-count-4')" onclick="play('pile-2-count-4')" id="pile-2-count-4">4</button>
+<button onmouseleave="leave('pile-2-count-3')" onmouseover="hover('pile-2-count-3')" onclick="play('pile-2-count-3')" id="pile-2-count-3">3</button>
+<button onmouseleave="leave('pile-2-count-2')" onmouseover="hover('pile-2-count-2')" onclick="play('pile-2-count-2')" id="pile-2-count-2">2</button>
+<button onmouseleave="leave('pile-2-count-1')" onmouseover="hover('pile-2-count-1')" onclick="play('pile-2-count-1')" id="pile-2-count-1">1</button>
+
+<p>pile 3</p>
+<button onmouseleave="leave('pile-3-count-7')" onmouseover="hover('pile-3-count-7')" onclick="play('pile-3-count-7')" id="pile-3-count-7">7</button>
+<button onmouseleave="leave('pile-3-count-6')" onmouseover="hover('pile-3-count-6')" onclick="play('pile-3-count-6')" id="pile-3-count-6">6</button>
+<button onmouseleave="leave('pile-3-count-5')" onmouseover="hover('pile-3-count-5')" onclick="play('pile-3-count-5')" id="pile-3-count-5">5</button>
+<button onmouseleave="leave('pile-3-count-4')" onmouseover="hover('pile-3-count-4')" onclick="play('pile-3-count-4')" id="pile-3-count-4">4</button>
+<button onmouseleave="leave('pile-3-count-3')" onmouseover="hover('pile-3-count-3')" onclick="play('pile-3-count-3')" id="pile-3-count-3">3</button>
+<button onmouseleave="leave('pile-3-count-2')" onmouseover="hover('pile-3-count-2')" onclick="play('pile-3-count-2')" id="pile-3-count-2">2</button>
+<button onmouseleave="leave('pile-3-count-1')" onmouseover="hover('pile-3-count-1')" onclick="play('pile-3-count-1')" id="pile-3-count-1">1</button>
+
+</body>
+<script>
+    const hover = (object) => {
+        // Split The Object > objectList
+        const objectList = object.split('');
+        // Get The Pile From The ObjectList > objectPileNo
+        const objectPileNo = objectList[5];
+        // Get The count From The ObjectList > objectCountNo
+        const objectCountNo = objectList[13];
+        
+        // console.log(object);
+        // console.log("objectPileNo", objectPileNo);
+        // console.log("objectCountNo", objectCountNo);
+        for (let i = 0; i < objectCountNo; i++) {
+            const element = `#pile-${objectPileNo}-count-${i + 1}`;
+            // check if btn with objectPileNo and objectCountNo is not disabled and disable 
+            if (document.querySelector(element).disabled !== true) {
+                console.log(document.querySelector(element).style.border = '5px solid red');
+            }
+        }
+
+    }
+
+
+    const leave = (object) => {
+        // Split The Object > objectList
+        const objectList = object.split('');
+        // Get The Pile From The ObjectList > objectPileNo
+        const objectPileNo = objectList[5];
+        // Get The count From The ObjectList > objectCountNo
+        const objectCountNo = objectList[13];
+
+        // console.log(object);
+        // console.log("objectPileNo", objectPileNo);
+        // console.log("objectCountNo", objectCountNo);
+        for (let i = 0; i < objectCountNo; i++) {
+            const element = `#pile-${objectPileNo}-count-${i + 1}`;
+            // check if btn with objectPileNo and objectCountNo is not disabled and disable 
+            if (document.querySelector(element).disabled !== true) {
+                console.log(document.querySelector(element).style.border = '');
+            }
+        }
+
+    }
+
+</script>
+</html>

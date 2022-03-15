@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="background-color: #673ab7;">
+    {% block body %}
+    {% endblock %}
+</body>
+{% load static %}
+
+<script>
+    
+// New Game ENGINE
+class Nim {
+    constructor(initial = [1, 3, 5, 7]) {
+        this.piles = initial;
+        this.player = 0;
+        this.winner = null;
+    }
+    available_actions(piles) {
+        // impliment range like for python
+        function* range(start, stop, step = 1) {
+            if (stop == null) {
+                // one param defined
+                stop = start;
+                start = 0;
+            }
+            for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
+                yield i;
+            }
+        }
+        const actions = [];
+        for (let i = 0; i < piles.length; i++) {
+            const element = piles[i];
+            for (let j of range(1, element + 1)) {
+                let tuple = Object.freeze([i, j]);
+                actions.push(tuple);
+            }
+        }
+        return actions;
+    }
+    other_player(playes) {
+        return playes === 1 ? 0 : 1;
+    }
+    switch_player() {
+        this.player = this.other_player(this.player);
+    }
+    move(pile, count) {
+        if (this.winner !== null) {
+            throw new Error("Game already won");
+        } else if (pile < 0 || pile >= this.piles.length) {
+            throw new Error("Invalid pile");
+        } else if (count < 1 || count > this.piles[pile]) {
+            throw new Error("Invalid number of objects");
+        }
+        // update pile
+        this.piles[pile] -= count;
+        this.switch_player();
+        // check for a winner
+        if (this.piles.every((e) => e === 0)) this.winner = this.player;
+    }
+}
+
+const available_actions = (game_piles) => {
+    return game.available_actions(game_piles)
+}
+const available = (action, available_actions) => {
+    let answer = false;
+    for (let i = 0; i < available_actions.length; i++) {
+        const element = available_actions[i];
+        if (JSON.stringify(element) === JSON.stringify(action))
+            answer = true
+    }
+    return answer;
+};
+
+
+
+const create_UI = (piles) => {
+    const htmlObjects = (pile, count) => {
+        const pileObjects = (pile, count) => {
+            // document.querySelector("#root").innerHTML += `<h3>pile : ${pile}`;
+            document.querySelector("#root").innerHTML += `<br/>`;
+        }
+        const countsObjects = (pile, count) => {
+            let listOfCounts = []
+            for (let i = 0; i < count; i++) {
+                const count = i
+                listOfCounts.push(count)
+            }
+            listOfCounts.reverse()
+            for (let i = 0; i < listOfCounts.length; i++) {
+                const count = listOfCounts[i];
+                document.querySelector("#root").innerHTML += `<button style="margin: 5px;border-radius: 50%;width: 50px;height: 50px;background: #ffc107;color: #101010;border: 5px solid #fff;font-size: 32px;padding: 0px;" onmouseleave="leave('pile-${pile}-count-${count + 1}')" onmouseover="hover('pile-${pile}-count-${count + 1}')" onclick="play('pile-${pile}-count-${count + 1}')" id='pile-${pile}-count-${count + 1}' >${count + 1}</button>`;
+            }
+        }
+        pileObjects(pile, count);
+        countsObjects(pile, count);
+    }
+    for (let i = 0; i < piles.length; i++) {
+        const pile = i;
+        const count = piles[i]
+        htmlObjects(pile, count)
+    }
+}
+
+
+const randomPlayer = () => {
+    return Math.floor(Math.random() * 2);
+};
+
+function create_game_bar_ui(player) {
+
+    document.querySelector('#ai').style.background = player !== human_player ? '#E91E7E' : '#03a9f4';
+    document.querySelector('#ai').style.border = player !== human_player ? '5px solid #880e4f' : '5px solid #00838f';
+    document.querySelector('#you').style.background = player === human_player ? '#E91E7E' : '#03a9f4';
+    document.querySelector('#you').style.border = player === human_player ? '5px solid #880e4f' : '5px solid #00838f';
+}
+
+const update_game_ui = (player,pile, count) => {
+    console.log("player",player);
+    let background_theme = player === 1 ? '#E91E7E' : '#03a9f4';
+    let border_theme = player === 1 ? '5px solid #880e4f' : '5px solid #00838f';
+    const default_count = pile === 0 ? 1 : pile === 1 ? 3 : pile === 2 ? 5 : 7
+    let done_count = 0
+    for (let i = 0; i < default_count; i++) {
+        const element = `#pile-${pile}-count-${i + 1}`;
+        if (done_count !== count) {
+            if (document.querySelector(element).disabled !== true) {
+                document.querySelector(element).disabled = true;
+                document.querySelector(element).style.background = background_theme;
+                document.querySelector(element).style.border = border_theme
+                document.querySelector(element).style.color = 'white'
+                done_count++;
+            }
+        }
+
+    }
+}   
+
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const log_status = (msg) => {
+    document.querySelector('#status').innerHTML = `${msg}`;
+}
+
+const hover = (object) => {
+    // Split The Object > objectList
+    const objectList = object.split('');
+    // Get The Pile From The ObjectList > objectPileNo
+    const objectPileNo = objectList[5];
+    // Get The count From The ObjectList > objectCountNo
+    const objectCountNo = objectList[13];
+    for (let i = 0; i < objectCountNo; i++) {
+        const element = `#pile-${objectPileNo}-count-${i + 1}`;
+        // check if btn with objectPileNo and objectCountNo is not disabled and disable 
+        if (document.querySelector(element).disabled !== true) {
+            document.querySelector(element).style.border = '5px solid #ffc107';
+        }
+    }
+
+}
+
+const leave = (object) => {
+    // Split The Object > objectList
+    const objectList = object.split('');
+    // Get The Pile From The ObjectList > objectPileNo
+    const objectPileNo = objectList[5];
+    // Get The count From The ObjectList > objectCountNo
+    const objectCountNo = objectList[13];
+
+    for (let i = 0; i < objectCountNo; i++) {
+        const element = `#pile-${objectPileNo}-count-${i + 1}`;
+        // check if btn with objectPileNo and objectCountNo is not disabled and disable 
+        if (document.querySelector(element).disabled !== true) {
+            document.querySelector(element).style.border = '5px solid #fff';
+        }
+    }
+
+}
+
+const human_Hand = async (object) => {
+    // Split The Object > objectList
+    const objectList = object.split('');
+    // Get The Pile From The ObjectList > objectPileNo
+    const objectPileNo = objectList[5];
+    // Get The count From The ObjectList > objectCountNo
+    const objectCountNo = objectList[13];
+    console.log("Click",object);
+    let disabledCount = 0
+    // loop over the objectCountNo 
+    for (let i = 0; i < objectCountNo; i++) {
+        const element = `#pile-${objectPileNo}-count-${i + 1}`;
+        // check if btn with objectPileNo and objectCountNo is not disabled and disable 
+        if (document.querySelector(element).disabled === true) {
+            disabledCount++
+        }
+    }
+    const human_pile_hand = parseInt(objectPileNo);
+    const human_count_hand = parseInt(objectCountNo) - parseInt(disabledCount);
+    console.log(game.player === human_player);
+    if (game.player === human_player) {
+        // check if action is avilable
+        if (available([human_pile_hand, human_count_hand], available_actions(game.piles))) {
+            game.move(human_pile_hand, human_count_hand);
+            update_game_ui(parseInt(game.player), human_pile_hand,human_count_hand);
+            if (game.winner !== null) {
+                const winner = game.winner == human_player ? "Win" : "Loose";
+                log_status(`GAME OVER -You ${winner}`);
+            } else {
+                log_status(`AI's Turn - wait`);           
+                const ai_ans = await ai_hand(game.piles);
+                wait(2000).then(() => {
+                    console.log('5 seconds have passed...');
+                    game.move(parseInt(ai_ans.pile), parseInt(ai_ans.count));
+                    update_game_ui(parseInt(game.player), parseInt(ai_ans.pile), parseInt(ai_ans.count));
+                    
+                    if (game.winner !== null) {
+                        const winner = game.winner == human_player ? "Win" : "Loose";
+                        log_status(`GAME OVER - You ${winner}`);
+                    } else {
+                        log_status(`Your Turn - play`); 
+                    }
+                });
+            }
+        } else {
+            console.log("log : action is not availabeS");
+        }
+    } else {
+        log_status(`AI's Turn - please wait`);           
+    }
+    console.log("log : Human Play ENGINE - (Ok)");
+}
+
+const ai_hand = async (game_piles) => {
+    let url = '/app/demo';
+    const reqOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: game_piles
+    };
+    const res = await fetch(url, reqOptions);
+    const data = await res.json();
+    const status = await res.status
+    if (status === 200) {
+        return data
+    } else {
+        log_status(`Error can't to the server - Check Internet`);           
+        return "Error"
+    }
+};
+
+
+// start.
+let human_player = null
+
+const game = new Nim();
+// New Game ENGINE - (Done)
+console.log("log : New Game ENGINE - (Done)");
+
+if (human_player === null) {
+    human_player = randomPlayer();
+}
+console.log("human_player : ", human_player);
+
+// New Game UI
+const game_ui = create_UI(game.piles);
+console.log("log : New Game UI - (Done)");
+// New Game Bar UI
+const new_game_bar_ui = create_game_bar_ui(game.player);
+
+if (game.player !== human_player) {
+    (async ()=> {
+
+        log_status(`AI's Turn - wait`);
+        const ai_ans = await ai_hand(game.piles);
+        wait(2000).then(() => {
+            console.log('5 seconds have passed...');
+            game.move(parseInt(ai_ans.pile), parseInt(ai_ans.count));
+            update_game_ui(parseInt(game.player), parseInt(ai_ans.pile), parseInt(ai_ans.count));
+            log_status(`Your Turn - play`);
+        }); 
+    })();
+} else {
+    log_status(`Your Turn - play`);
+}
+function play(object) {human_Hand(object)};
+</script>
+</html>

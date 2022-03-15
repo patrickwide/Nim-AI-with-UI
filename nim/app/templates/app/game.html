@@ -1,0 +1,24 @@
+{% extends "app/layout.html" %}
+
+{% block body %}
+
+<h1>welcome</h1>
+{% if message %}
+<div>{{ message }}</div>
+{% endif %}
+{% csrf_token %}
+<h1 id="status_bar"></h1>
+<h1 id="player_bar"></h1>
+<p id="actions_bar"></p>
+<br>
+<label for="pile">Enter Pile</label>
+<br>
+<input type="text" id="pile">
+<br>
+<label for="count">Enter Count</label>
+<br>
+<input type="text" id="count">
+<br><br>
+<button id="send" onmouseover="hover()" onmouseleave="leave()">play</button>
+<div>Hello, world</div>
+{% endblock %}
