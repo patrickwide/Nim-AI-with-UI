@@ -192,8 +192,10 @@ const human_Hand = async (object) => {
     const objectList = object.split('');
     // Get The Pile From The ObjectList > objectPileNo
     const objectPileNo = objectList[5];
+    console.log(`objectPileNo ${objectPileNo}`);
     // Get The count From The ObjectList > objectCountNo
     const objectCountNo = objectList[13];
+    console.log(`objectCountNo ${objectCountNo}`);
     console.log("Click",object);
     let disabledCount = 0
     // loop over the objectCountNo 

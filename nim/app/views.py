@@ -8,9 +8,10 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.urls import reverse
 from .nim import train, play, Nim
 import random
-
+import json
+import ast
 # Create your views here.
-ai = train(100000)
+ai = train(1000)
 
 
 def index(req):
@@ -34,6 +35,20 @@ def game(req):
 
 
 @csrf_exempt
+def api(req):
+    if req.method == 'POST':
+        input = req.body.decode("utf-8", "strict")
+        input = json.JSONDecoder().decode(input)
+        gameBoard = input['state']
+        gameBoard = ast.literal_eval(gameBoard)
+        pile, count = ai.choose_action(gameBoard, epsilon=False)
+        print(f"pile : {pile}, count : {count}")
+        return JsonResponse({'pile': f"{pile}", 'count': f"{count}"})
+    else:
+        return HttpResponse("Hello world")
+
+
+@csrf_exempt
 def demo(req):
     if req.method == "POST":
         a = str(req.body.decode("utf-8", "strict"))
@@ -52,7 +67,6 @@ def demo(req):
     return render(req, 'app/demo.html', {
         "message": "Hello..."
     })
-
 
 def sign_in(req):
     if req.method == "POST":
